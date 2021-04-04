@@ -1,5 +1,9 @@
-function a() {
-    console.log('hello world 4')
+import * as PIXI from 'pixi.js';
+
+let type = 'WebGL';
+if (!PIXI.utils.isWebGLSupported()) {
+    type = 'canvas';
 }
 
-a()
+PIXI.utils.sayHello(type);
+console.log('***')
