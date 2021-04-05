@@ -47,5 +47,7 @@ function setup() {
     const cat = new Sprite(
         loader.resources[imagePath].texture
     );
+      //Change the sprite's position
+    cat.position.set(96, 96);
     stage.addChild(cat);
 }
