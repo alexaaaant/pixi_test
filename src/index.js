@@ -48,12 +48,18 @@ function setup() {
         loader.resources[imagePath].texture
     );
       //Change the sprite's position
-    cat.position.set(96, 96);
+    // cat.position.set(96, 96);
 
-    cat.width = 80;
-    cat.height = 120;
+    // cat.width = 80;
+    // cat.height = 120;
 
-    cat.scale.set(0.5, 0.5);
+    // cat.scale.set(0.5, 0.5);
+
+    // cat.anchor.x = 0.5;
+    // cat.anchor.y = 0.5;
+    // cat.rotation = 0.5;
+
+    // cat.pivot.set(32, 32)
 
     stage.addChild(cat);
 }
