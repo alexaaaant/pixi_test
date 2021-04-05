@@ -49,5 +49,11 @@ function setup() {
     );
       //Change the sprite's position
     cat.position.set(96, 96);
+
+    cat.width = 80;
+    cat.height = 120;
+
+    cat.scale.set(0.5, 0.5);
+
     stage.addChild(cat);
 }
