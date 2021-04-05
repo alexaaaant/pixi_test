@@ -6,8 +6,12 @@ if (!PIXI.utils.isWebGLSupported()) {
     type = 'canvas';
 }
 
+const Application = PIXI.Application,
+    Loader = PIXI.Loader,
+    Sprite = PIXI.Sprite;
+
 //Create a Pixi Application
-const app = new PIXI.Application({
+const app = new Application({
     width: 256, 
     height: 256,
     antialias: true,
@@ -19,13 +23,28 @@ document.body.appendChild(app.view);
 
 const stage = app.stage;
 const imagePath = Cat;
-const loader = new PIXI.Loader();
+const loader = new Loader();
 loader
-.add(imagePath)
-.load(setup)
+    .add(imagePath)
+    .load(setup)
+    
+
+loader.onProgress.add(loadProgressHandler);
+
+function loadProgressHandler(loader, resource) {
+  //Display the file `url` currently being loaded
+  console.log("loading: " + resource.url); 
+
+  //Display the percentage of files currently loaded
+  console.log("progress: " + loader.progress + "%"); 
+
+  //If you gave your files names as the first argument 
+  //of the `add` method, you can access them like this
+  //console.log("loading: " + resource.name);
+}
 
 function setup() {
-    const cat = new PIXI.Sprite(
+    const cat = new Sprite(
         loader.resources[imagePath].texture
     );
     stage.addChild(cat);
