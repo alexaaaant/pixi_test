@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import Cat from '../images/cat.png';
+import Tileset from '../images/tileset.png';
 
 let type = 'WebGL';
 if (!PIXI.utils.isWebGLSupported()) {
@@ -8,7 +9,9 @@ if (!PIXI.utils.isWebGLSupported()) {
 
 const Application = PIXI.Application,
     Loader = PIXI.Loader,
-    Sprite = PIXI.Sprite;
+    Sprite = PIXI.Sprite,
+    Rectangle = PIXI.Rectangle,
+    TextureCache = PIXI.utils.TextureCache;
 
 //Create a Pixi Application
 const app = new Application({
@@ -23,9 +26,11 @@ document.body.appendChild(app.view);
 
 const stage = app.stage;
 const imagePath = Cat;
+const tilesetPath = Tileset;
+
 const loader = new Loader();
 loader
-    .add(imagePath)
+    .add([imagePath, tilesetPath])
     .load(setup)
     
 
@@ -47,6 +52,9 @@ function setup() {
     const cat = new Sprite(
         loader.resources[imagePath].texture
     );
+    const tileset = new Sprite(
+        loader.resources[tilesetPath].texture
+    )
       //Change the sprite's position
     // cat.position.set(96, 96);
 
@@ -60,6 +68,12 @@ function setup() {
     // cat.rotation = 0.5;
 
     // cat.pivot.set(32, 32)
-
-    stage.addChild(cat);
+    const texture = TextureCache[tilesetPath];
+    const rectangle = new Rectangle(96, 64, 32, 32);
+    texture.frame = rectangle;
+    const rocket = new Sprite(texture);
+    rocket.x = 32;
+    rocket.y = 32;
+    
+    stage.addChild(tileset);
 }
