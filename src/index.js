@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js';
 import Cat from '../images/cat.png';
 import Tileset from '../images/tileset.png';
+import treasureHunter from '../images/treasureHunter.json';
+import treasureImage from '../images/treasureHunter.png';
 
 let type = 'WebGL';
 if (!PIXI.utils.isWebGLSupported()) {
@@ -8,72 +10,76 @@ if (!PIXI.utils.isWebGLSupported()) {
 }
 
 const Application = PIXI.Application,
-    Loader = PIXI.Loader,
+    Container = PIXI.Container,
+    TextureCache = PIXI.utils.TextureCache,
     Sprite = PIXI.Sprite,
     Rectangle = PIXI.Rectangle,
-    TextureCache = PIXI.utils.TextureCache;
+    Loader = PIXI.Loader;
 
 //Create a Pixi Application
 const app = new Application({
-    width: 256, 
-    height: 256,
-    antialias: true,
-    resolution: 1,
+    width: 512, 
+    height: 512,                       
+    antialiasing: true, 
+    backgroundAlpha: 1, 
+    resolution: 1
 });
 
 //Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
 
+
 const stage = app.stage;
-const imagePath = Cat;
-const tilesetPath = Tileset;
 
-const loader = new Loader();
-loader
-    .add([imagePath, tilesetPath])
-    .load(setup)
-    
+let dungeon, explorer, treasure, door;
 
-loader.onProgress.add(loadProgressHandler);
+const baseTexture = new PIXI.BaseTexture(treasureImage, null, 1)
+const spritesheet = new PIXI.Spritesheet(baseTexture, treasureHunter);
+spritesheet.parse(setup);
 
-function loadProgressHandler(loader, resource) {
-  //Display the file `url` currently being loaded
-  console.log("loading: " + resource.url); 
 
-  //Display the percentage of files currently loaded
-  console.log("progress: " + loader.progress + "%"); 
 
-  //If you gave your files names as the first argument 
-  //of the `add` method, you can access them like this
-  //console.log("loading: " + resource.name);
+
+function setup(textures) {
+    dungeon = new Sprite(textures["dungeon.png"]);
+    explorer = new Sprite(textures["explorer.png"]);
+    treasure = new Sprite(textures["treasure.png"]);
+    stage.addChild(dungeon);
+
+    explorer.x = 68;
+    explorer.y = stage.height / 2 - explorer.height / 2;
+    stage.addChild(explorer);
+
+    stage.addChild(treasure);
+    treasure.x = stage.width - treasure.width - 48;
+    treasure.y = stage.height / 2 - treasure.height / 2;
+    stage.addChild(treasure);
+
+    door = new Sprite(textures["door.png"]);
+    door.position.set(32, 0);
+    stage.addChild(door);
+
+    makeBlobs(textures)
 }
 
-function setup() {
-    const cat = new Sprite(
-        loader.resources[imagePath].texture
-    );
-    const tileset = new Sprite(
-        loader.resources[tilesetPath].texture
-    )
-      //Change the sprite's position
-    // cat.position.set(96, 96);
+function makeBlobs(textures) {
+    let numberOfBlobs = 6,
+        spacing = 48,
+        xOffset = 150;
 
-    // cat.width = 80;
-    // cat.height = 120;
+    for (let i = 0; i < numberOfBlobs; i++) {
+        const blob = new Sprite(textures["blob.png"]);
 
-    // cat.scale.set(0.5, 0.5);
+        const x = spacing * i + xOffset;
+        const y = randomInt(0, stage.height - blob.height);
 
-    // cat.anchor.x = 0.5;
-    // cat.anchor.y = 0.5;
-    // cat.rotation = 0.5;
+        blob.x = x;
+        blob.y = y;
 
-    // cat.pivot.set(32, 32)
-    const texture = TextureCache[tilesetPath];
-    const rectangle = new Rectangle(96, 64, 32, 32);
-    texture.frame = rectangle;
-    const rocket = new Sprite(texture);
-    rocket.x = 32;
-    rocket.y = 32;
-    
-    stage.addChild(tileset);
+        stage.addChild(blob);
+    }
+}
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
