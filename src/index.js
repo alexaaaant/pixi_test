@@ -31,7 +31,7 @@ document.body.appendChild(app.view);
 
 const stage = app.stage;
 
-let dungeon, explorer, treasure, door;
+let dungeon, explorer, treasure, door, state;
 
 const baseTexture = new PIXI.BaseTexture(treasureImage, null, 1)
 const spritesheet = new PIXI.Spritesheet(baseTexture, treasureHunter);
@@ -93,10 +93,16 @@ function setup(textures) {
     explorer.vx = 0;
     explorer.vy = 0;
 
+    state = play;
     app.ticker.add(delta => gameLoop(delta));
 }
 
+
 function gameLoop(delta) {
+    state(delta);
+}
+
+function play(delta) {
     explorer.vx = 1;
     explorer.vy = 1;
     if (keyUp) {
