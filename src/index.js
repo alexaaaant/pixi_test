@@ -38,7 +38,36 @@ const spritesheet = new PIXI.Spritesheet(baseTexture, treasureHunter);
 spritesheet.parse(setup);
 
 
+let keyUp, keyDown, keyRight, keyLeft = false;
 
+document.body.addEventListener('keydown', (e) => {
+    if (e.code === 'KeyW') {
+        keyUp = true;
+    }
+    if (e.code === 'KeyA') {
+        keyLeft = true;
+    }
+    if (e.code === 'KeyS') {
+        keyDown = true;
+    }
+    if (e.code === 'KeyD') {
+        keyRight = true;
+    }
+})
+document.body.addEventListener('keyup', (e) => {
+    if (e.code === 'KeyW') {
+        keyUp = false;
+    }
+    if (e.code === 'KeyA') {
+        keyLeft = false;
+    }
+    if (e.code === 'KeyS') {
+        keyDown = false;
+    }
+    if (e.code === 'KeyD') {
+        keyRight = false;
+    }
+})
 
 function setup(textures) {
     dungeon = new Sprite(textures["dungeon.png"]);
@@ -57,9 +86,31 @@ function setup(textures) {
 
     door = new Sprite(textures["door.png"]);
     door.position.set(32, 0);
-    stage.addChild(door);
 
-    makeBlobs(textures)
+    makeBlobs(textures);
+    stage.addChild(door);
+    
+    explorer.vx = 0;
+    explorer.vy = 0;
+
+    app.ticker.add(delta => gameLoop(delta));
+}
+
+function gameLoop(delta) {
+    explorer.vx = 1;
+    explorer.vy = 1;
+    if (keyUp) {
+        explorer.y -= explorer.vy;
+    }
+    if (keyDown) {
+        explorer.y += explorer.vy;
+    }
+    if (keyLeft) {
+        explorer.x -= explorer.vx;
+    }
+    if (keyRight) {
+        explorer.x += explorer.vx;
+    }
 }
 
 function makeBlobs(textures) {
