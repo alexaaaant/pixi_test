@@ -37,38 +37,6 @@ const baseTexture = new PIXI.BaseTexture(treasureImage, null, 1)
 const spritesheet = new PIXI.Spritesheet(baseTexture, treasureHunter);
 spritesheet.parse(setup);
 
-
-let keyUp, keyDown, keyRight, keyLeft = false;
-
-document.body.addEventListener('keydown', (e) => {
-    if (e.code === 'KeyW') {
-        keyUp = true;
-    }
-    if (e.code === 'KeyA') {
-        keyLeft = true;
-    }
-    if (e.code === 'KeyS') {
-        keyDown = true;
-    }
-    if (e.code === 'KeyD') {
-        keyRight = true;
-    }
-})
-document.body.addEventListener('keyup', (e) => {
-    if (e.code === 'KeyW') {
-        keyUp = false;
-    }
-    if (e.code === 'KeyA') {
-        keyLeft = false;
-    }
-    if (e.code === 'KeyS') {
-        keyDown = false;
-    }
-    if (e.code === 'KeyD') {
-        keyRight = false;
-    }
-})
-
 function setup(textures) {
     dungeon = new Sprite(textures["dungeon.png"]);
     explorer = new Sprite(textures["explorer.png"]);
@@ -103,20 +71,8 @@ function gameLoop(delta) {
 }
 
 function play(delta) {
-    explorer.vx = 1;
-    explorer.vy = 1;
-    if (keyUp) {
-        explorer.y -= explorer.vy;
-    }
-    if (keyDown) {
-        explorer.y += explorer.vy;
-    }
-    if (keyLeft) {
-        explorer.x -= explorer.vx;
-    }
-    if (keyRight) {
-        explorer.x += explorer.vx;
-    }
+    explorer.x += explorer.vx;
+    explorer.y += explorer.vy;
 }
 
 function makeBlobs(textures) {
@@ -140,3 +96,97 @@ function makeBlobs(textures) {
 function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+function keyboard(value) {
+    let key = {};
+    key.value = value;
+    key.isDown = false;
+    key.isUp = true;
+    key.press = undefined;
+    key.release = undefined;
+    //The `downHandler`
+    key.downHandler = event => {
+      if (event.key === key.value) {
+        if (key.isUp && key.press) key.press();
+        key.isDown = true;
+        key.isUp = false;
+        event.preventDefault();
+      }
+    };
+  
+    //The `upHandler`
+    key.upHandler = event => {
+      if (event.key === key.value) {
+        if (key.isDown && key.release) key.release();
+        key.isDown = false;
+        key.isUp = true;
+        event.preventDefault();
+      }
+    };
+  
+    //Attach event listeners
+    const downListener = key.downHandler.bind(key);
+    const upListener = key.upHandler.bind(key);
+    
+    window.addEventListener(
+      "keydown", downListener, false
+    );
+    window.addEventListener(
+      "keyup", upListener, false
+    );
+    
+    // Detach event listeners
+    key.unsubscribe = () => {
+      window.removeEventListener("keydown", downListener);
+      window.removeEventListener("keyup", upListener);
+    };
+    
+    return key;
+}
+
+let down = keyboard('ArrowDown');
+let up = keyboard('ArrowUp');
+let left = keyboard('ArrowLeft');
+let right = keyboard('ArrowRight');
+
+left.press = () => {
+    explorer.vx = -5;
+    explorer.vy = 0;
+}
+
+left.release = () => {
+    if (!right.isDown && explorer.vy === 0) {
+        explorer.vx = 0;
+    }
+}
+
+up.press = () => {
+    explorer.vy = -5;
+    explorer.vx = 0;
+}
+up.release = () => {
+    if (!down.isDown && explorer.vx === 0) {
+        explorer.vy = 0;
+    }
+}
+
+right.press = () => {
+    explorer.vx = 5;
+    explorer.vy = 0;
+}
+right.release = () => {
+    if (!left.isDown && explorer.vy === 0) {
+        explorer.vx = 0;
+    }
+}
+
+down.press = () => {
+    explorer.vy = 5;
+    explorer.vx = 0;
+  };
+  
+down.release = () => {
+    if (!up.isDown && explorer.vx === 0) {
+        explorer.vy = 0;
+    }
+};
