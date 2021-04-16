@@ -32,6 +32,7 @@ document.body.appendChild(app.view);
 const stage = app.stage;
 
 let dungeon, explorer, treasure, door, state;
+let items = new PIXI.Container();
 
 const baseTexture = new PIXI.BaseTexture(treasureImage, null, 1)
 const spritesheet = new PIXI.Spritesheet(baseTexture, treasureHunter);
@@ -43,23 +44,27 @@ function setup(textures) {
     treasure = new Sprite(textures["treasure.png"]);
     stage.addChild(dungeon);
 
-    explorer.x = 68;
-    explorer.y = stage.height / 2 - explorer.height / 2;
-    stage.addChild(explorer);
+    // stage.addChild(explorer);
 
-    stage.addChild(treasure);
-    treasure.x = stage.width - treasure.width - 48;
-    treasure.y = stage.height / 2 - treasure.height / 2;
-    stage.addChild(treasure);
+    // stage.addChild(treasure);
 
     door = new Sprite(textures["door.png"]);
-    door.position.set(32, 0);
 
-    makeBlobs(textures);
-    stage.addChild(door);
+    // makeBlobs(textures);
+    // stage.addChild(door);
+
+    explorer.position.set(16, 16);
+    treasure.position.set(32, 32);
+    door.position.set(64, 64);
     
     explorer.vx = 0;
     explorer.vy = 0;
+
+    items.addChild(explorer);
+    items.addChild(door);
+    items.addChild(treasure);
+    items.position.set(128, 128)
+    stage.addChild(items);
 
     state = play;
     app.ticker.add(delta => gameLoop(delta));
@@ -184,7 +189,7 @@ down.press = () => {
     explorer.vy = 5;
     explorer.vx = 0;
   };
-  
+
 down.release = () => {
     if (!up.isDown && explorer.vx === 0) {
         explorer.vy = 0;
