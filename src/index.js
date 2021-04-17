@@ -33,6 +33,7 @@ const stage = app.stage;
 
 let dungeon, explorer, treasure, door, state;
 let items = new PIXI.Container();
+let superFastSprites = new PIXI.ParticleContainer();
 
 const baseTexture = new PIXI.BaseTexture(treasureImage, null, 1)
 const spritesheet = new PIXI.Spritesheet(baseTexture, treasureHunter);
@@ -60,11 +61,11 @@ function setup(textures) {
     explorer.vx = 0;
     explorer.vy = 0;
 
-    items.addChild(explorer);
-    items.addChild(door);
-    items.addChild(treasure);
-    items.position.set(128, 128)
-    stage.addChild(items);
+    superFastSprites.addChild(explorer);
+    superFastSprites.addChild(door);
+    superFastSprites.addChild(treasure);
+    superFastSprites.position.set(128, 128)
+    stage.addChild(superFastSprites);
 
     state = play;
     app.ticker.add(delta => gameLoop(delta));
