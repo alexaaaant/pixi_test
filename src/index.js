@@ -15,7 +15,9 @@ const Application = PIXI.Application,
     Sprite = PIXI.Sprite,
     Rectangle = PIXI.Rectangle,
     Loader = PIXI.Loader,
-    Graphics = PIXI.Graphics;
+    Graphics = PIXI.Graphics,
+    Text = PIXI.Text,
+    TextStyle = PIXI.TextStyle;
 
 //Create a Pixi Application
 const app = new Application({
@@ -79,6 +81,7 @@ function setup(textures) {
     drawRoundedRect();
     drawLine();
     drawTriangle();
+    drawText();
     state = play;
     app.ticker.add(delta => gameLoop(delta));
 }
@@ -141,6 +144,27 @@ function drawTriangle() {
     triangle.x = 180;
     triangle.y = 22;
     stage.addChild(triangle);
+}
+
+function drawText() {
+    let style = new TextStyle({
+        fontFamily: "Arial",
+        fontSize: 36,
+        fill: "white",
+        stroke: '#ff3300',
+        strokeThickness: 4,
+        dropShadow: true,
+        dropShadowColor: "#000000",
+        dropShadowBlur: 4,
+        dropShadowAngle: Math.PI / 6,
+        dropShadowDistance: 6,
+        });
+    const message = new Text("Hello world!", style);
+    message.position.set(54, 96);
+    stage.addChild(message);
+    message.style = {wordWrap: true, wordWrapWidth: 10, align: 'center'};
+    message.text = "Changed";
+    message.style = {fill: "black", font: "16px PetMe64"};
 }
 
 function gameLoop(delta) {
