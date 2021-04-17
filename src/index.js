@@ -14,7 +14,8 @@ const Application = PIXI.Application,
     TextureCache = PIXI.utils.TextureCache,
     Sprite = PIXI.Sprite,
     Rectangle = PIXI.Rectangle,
-    Loader = PIXI.Loader;
+    Loader = PIXI.Loader,
+    Graphics = PIXI.Graphics;
 
 //Create a Pixi Application
 const app = new Application({
@@ -34,6 +35,12 @@ const stage = app.stage;
 let dungeon, explorer, treasure, door, state;
 let items = new PIXI.Container();
 let superFastSprites = new PIXI.ParticleContainer();
+const rectangle = new Graphics();
+const circle = new Graphics();
+const ellipse = new Graphics();
+const roundBox = new Graphics();
+const line = new Graphics();
+const triangle = new Graphics();
 
 const baseTexture = new PIXI.BaseTexture(treasureImage, null, 1)
 const spritesheet = new PIXI.Spritesheet(baseTexture, treasureHunter);
@@ -66,11 +73,75 @@ function setup(textures) {
     superFastSprites.addChild(treasure);
     superFastSprites.position.set(128, 128)
     stage.addChild(superFastSprites);
-
+    drawRect();
+    drawCircle();
+    drawEllipse();
+    drawRoundedRect();
+    drawLine();
+    drawTriangle();
     state = play;
     app.ticker.add(delta => gameLoop(delta));
 }
 
+function drawRect() {
+    rectangle.beginFill(0x66CCFF);
+    rectangle.lineStyle(4, 0xFF3300, 1);
+    rectangle.drawRect(0, 0, 100, 100);
+    rectangle.endFill();
+    rectangle.x = 170;
+    rectangle.y = 170;
+    stage.addChild(rectangle);
+}
+
+function drawCircle() {
+    circle.beginFill(0x9966FF);
+    circle.drawCircle(0, 0, 32);
+    circle.endFill();
+    circle.x = 64;
+    circle.y = 130;
+    stage.addChild(circle);
+}
+
+function drawEllipse() {
+    ellipse.beginFill(0xFFFF00);
+    ellipse.drawEllipse(0, 0, 50, 20);
+    ellipse.endFill();
+    ellipse.x = 180;
+    ellipse.y = 130;
+    stage.addChild(ellipse);
+}
+
+function drawRoundedRect() {
+    roundBox.lineStyle(4, 0x99CCFF, 1);
+    roundBox.beginFill(0xFF9933);
+    roundBox.drawRoundedRect(0, 0, 84, 36, 10);
+    roundBox.endFill();
+    roundBox.x = 48;
+    roundBox.y = 190;
+    stage.addChild(roundBox);
+}
+
+function drawLine() {
+    line.lineStyle(4, 0xFFFFFF, 1);
+    line.moveTo(0, 0);
+    line.lineTo(80, 50);
+    line.x = 32;
+    line.y = 32;
+    stage.addChild(line);
+}
+
+function drawTriangle() {
+    triangle.beginFill(0x66FF33);
+    triangle.drawPolygon([
+        -32, 64,
+        32, 64,
+        0, 0
+    ]);
+    triangle.endFill();
+    triangle.x = 180;
+    triangle.y = 22;
+    stage.addChild(triangle);
+}
 
 function gameLoop(delta) {
     state(delta);
