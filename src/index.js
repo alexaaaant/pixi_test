@@ -28,6 +28,8 @@ const app = new Application({
     resolution: 1
 });
 
+const message = new Text("Hello world!");
+
 //Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
 
@@ -54,14 +56,14 @@ function setup(textures) {
     treasure = new Sprite(textures["treasure.png"]);
     stage.addChild(dungeon);
 
-    // stage.addChild(explorer);
+    stage.addChild(explorer);
 
-    // stage.addChild(treasure);
+    stage.addChild(treasure);
 
     door = new Sprite(textures["door.png"]);
 
     // makeBlobs(textures);
-    // stage.addChild(door);
+    stage.addChild(door);
 
     explorer.position.set(16, 16);
     treasure.position.set(32, 32);
@@ -70,17 +72,17 @@ function setup(textures) {
     explorer.vx = 0;
     explorer.vy = 0;
 
-    superFastSprites.addChild(explorer);
-    superFastSprites.addChild(door);
-    superFastSprites.addChild(treasure);
-    superFastSprites.position.set(128, 128)
-    stage.addChild(superFastSprites);
+    // superFastSprites.addChild(explorer);
+    // superFastSprites.addChild(door);
+    // superFastSprites.addChild(treasure);
+    // superFastSprites.position.set(128, 128)
+    // stage.addChild(superFastSprites);
     drawRect();
-    drawCircle();
-    drawEllipse();
-    drawRoundedRect();
-    drawLine();
-    drawTriangle();
+    // drawCircle();
+    // drawEllipse();
+    // drawRoundedRect();
+    // drawLine();
+    // drawTriangle();
     drawText();
     state = play;
     app.ticker.add(delta => gameLoop(delta));
@@ -159,7 +161,7 @@ function drawText() {
         dropShadowAngle: Math.PI / 6,
         dropShadowDistance: 6,
         });
-    const message = new Text("Hello world!", style);
+    message.style = style;
     message.position.set(54, 96);
     stage.addChild(message);
     message.style = {wordWrap: true, wordWrapWidth: 10, align: 'center'};
@@ -174,6 +176,65 @@ function gameLoop(delta) {
 function play(delta) {
     explorer.x += explorer.vx;
     explorer.y += explorer.vy;
+
+    if (hitTestRectangle(explorer, door)) {
+        message.text = 'hit';
+        rectangle.tint = 0xff3300;
+    } else {
+        message.text = 'no collision';
+        rectangle.tint = 0xccff99;
+    }
+}
+
+function hitTestRectangle(r1, r2) {
+
+  //Define the variables we'll need to calculate
+  let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+
+  //hit will determine whether there's a collision
+  hit = false;
+
+  //Find the center points of each sprite
+  r1.centerX = r1.x + r1.width / 2;
+  r1.centerY = r1.y + r1.height / 2;
+  r2.centerX = r2.x + r2.width / 2;
+  r2.centerY = r2.y + r2.height / 2;
+
+  //Find the half-widths and half-heights of each sprite
+  r1.halfWidth = r1.width / 2;
+  r1.halfHeight = r1.height / 2;
+  r2.halfWidth = r2.width / 2;
+  r2.halfHeight = r2.height / 2;
+
+  //Calculate the distance vector between the sprites
+  vx = r1.centerX - r2.centerX;
+  vy = r1.centerY - r2.centerY;
+
+  //Figure out the combined half-widths and half-heights
+  combinedHalfWidths = r1.halfWidth + r2.halfWidth;
+  combinedHalfHeights = r1.halfHeight + r2.halfHeight;
+
+  //Check for a collision on the x axis
+  if (Math.abs(vx) < combinedHalfWidths) {
+
+    //A collision might be occurring. Check for a collision on the y axis
+    if (Math.abs(vy) < combinedHalfHeights) {
+
+      //There's definitely a collision happening
+      hit = true;
+    } else {
+
+      //There's no collision on the y axis
+      hit = false;
+    }
+  } else {
+
+    //There's no collision on the x axis
+    hit = false;
+  }
+
+  //`hit` will be either `true` or `false`
+  return hit;
 }
 
 function makeBlobs(textures) {
