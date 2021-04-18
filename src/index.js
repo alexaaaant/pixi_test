@@ -48,44 +48,46 @@ const triangle = new Graphics();
 
 const baseTexture = new PIXI.BaseTexture(treasureImage, null, 1)
 const spritesheet = new PIXI.Spritesheet(baseTexture, treasureHunter);
+
+let gameScene; let gameOverScene;
+
 spritesheet.parse(setup);
 
+
 function setup(textures) {
-    dungeon = new Sprite(textures["dungeon.png"]);
-    explorer = new Sprite(textures["explorer.png"]);
-    treasure = new Sprite(textures["treasure.png"]);
-    stage.addChild(dungeon);
+    gameScene = new Container();    
+    dungeon = new Sprite(textures['dungeon.png']);
+    gameScene.addChild(dungeon);
 
-    stage.addChild(explorer);
+    door = new Sprite(textures['door.png']);
+    door.position.set(32, 0);
+    gameScene.addChild(door);
 
-    stage.addChild(treasure);
-
-    door = new Sprite(textures["door.png"]);
-
-    // makeBlobs(textures);
-    stage.addChild(door);
-
-    explorer.position.set(16, 16);
-    treasure.position.set(32, 32);
-    door.position.set(64, 64);
-    
+    explorer = new Sprite(textures['explorer.png']);
+    explorer.x = 68;
+    explorer.y = gameScene.height / 2 - explorer.height / 2;
     explorer.vx = 0;
     explorer.vy = 0;
+    gameScene.addChild(explorer);
 
-    // superFastSprites.addChild(explorer);
-    // superFastSprites.addChild(door);
-    // superFastSprites.addChild(treasure);
-    // superFastSprites.position.set(128, 128)
-    // stage.addChild(superFastSprites);
-    drawRect();
-    // drawCircle();
-    // drawEllipse();
-    // drawRoundedRect();
-    // drawLine();
-    // drawTriangle();
-    drawText();
+    treasure = new Sprite(textures['treasure.png']);
+    treasure.x = gameScene.width - treasure.width - 48;
+    treasure.y = gameScene.height / 2 - treasure.height / 2;
+    gameScene.addChild(treasure);
+
+    stage.addChild(gameScene);
+
+    gameOverScene = new Container();
+    stage.addChild(gameOverScene)
+    gameOverScene.visible = false;
+
     state = play;
+
     app.ticker.add(delta => gameLoop(delta));
+}
+
+function gameLoop(delta) {
+
 }
 
 function drawRect() {
@@ -167,10 +169,6 @@ function drawText() {
     message.style = {wordWrap: true, wordWrapWidth: 10, align: 'center'};
     message.text = "Changed";
     message.style = {fill: "black", font: "16px PetMe64"};
-}
-
-function gameLoop(delta) {
-    state(delta);
 }
 
 function play(delta) {
