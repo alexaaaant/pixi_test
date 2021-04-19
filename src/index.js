@@ -111,6 +111,16 @@ function moveBlobs() {
     });
 }
 
+function checkHit() {
+if (explorerHit) {
+    explorer.alpha = 0.5;
+    healthBar.outer.width -= 1;
+    } else {
+    explorer.alpha = 1;
+    }
+    explorerHit = false;
+}
+
 function drawText() {
     let style = new TextStyle({
         fontFamily: "Futura",
@@ -136,6 +146,7 @@ function play(delta) {
     }
     contain(explorer, {x: 28, y: 10, width: 488, height: 480});
     moveBlobs();
+    checkHit();
 }
 
 function hitTestRectangle(r1, r2) {
