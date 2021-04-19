@@ -36,7 +36,8 @@ document.body.appendChild(app.view);
 
 const stage = app.stage;
 
-let dungeon, explorer, treasure, door, state;
+let dungeon, explorer, treasure, door, state, healthBar;
+let blobs = [];
 let items = new PIXI.Container();
 let superFastSprites = new PIXI.ParticleContainer();
 const rectangle = new Graphics();
@@ -52,6 +53,7 @@ const spritesheet = new PIXI.Spritesheet(baseTexture, treasureHunter);
 let gameScene; let gameOverScene;
 
 spritesheet.parse(setup);
+
 
 
 function setup(textures) {
@@ -83,6 +85,9 @@ function setup(textures) {
 
     state = play;
 
+    makeBlobs(textures);
+    makeHealthBar();
+
     app.ticker.add(delta => gameLoop(delta));
 }
 
@@ -90,85 +95,16 @@ function gameLoop(delta) {
 
 }
 
-function drawRect() {
-    rectangle.beginFill(0x66CCFF);
-    rectangle.lineStyle(4, 0xFF3300, 1);
-    rectangle.drawRect(0, 0, 100, 100);
-    rectangle.endFill();
-    rectangle.x = 170;
-    rectangle.y = 170;
-    stage.addChild(rectangle);
-}
-
-function drawCircle() {
-    circle.beginFill(0x9966FF);
-    circle.drawCircle(0, 0, 32);
-    circle.endFill();
-    circle.x = 64;
-    circle.y = 130;
-    stage.addChild(circle);
-}
-
-function drawEllipse() {
-    ellipse.beginFill(0xFFFF00);
-    ellipse.drawEllipse(0, 0, 50, 20);
-    ellipse.endFill();
-    ellipse.x = 180;
-    ellipse.y = 130;
-    stage.addChild(ellipse);
-}
-
-function drawRoundedRect() {
-    roundBox.lineStyle(4, 0x99CCFF, 1);
-    roundBox.beginFill(0xFF9933);
-    roundBox.drawRoundedRect(0, 0, 84, 36, 10);
-    roundBox.endFill();
-    roundBox.x = 48;
-    roundBox.y = 190;
-    stage.addChild(roundBox);
-}
-
-function drawLine() {
-    line.lineStyle(4, 0xFFFFFF, 1);
-    line.moveTo(0, 0);
-    line.lineTo(80, 50);
-    line.x = 32;
-    line.y = 32;
-    stage.addChild(line);
-}
-
-function drawTriangle() {
-    triangle.beginFill(0x66FF33);
-    triangle.drawPolygon([
-        -32, 64,
-        32, 64,
-        0, 0
-    ]);
-    triangle.endFill();
-    triangle.x = 180;
-    triangle.y = 22;
-    stage.addChild(triangle);
-}
-
 function drawText() {
     let style = new TextStyle({
-        fontFamily: "Arial",
-        fontSize: 36,
-        fill: "white",
-        stroke: '#ff3300',
-        strokeThickness: 4,
-        dropShadow: true,
-        dropShadowColor: "#000000",
-        dropShadowBlur: 4,
-        dropShadowAngle: Math.PI / 6,
-        dropShadowDistance: 6,
-        });
-    message.style = style;
-    message.position.set(54, 96);
-    stage.addChild(message);
-    message.style = {wordWrap: true, wordWrapWidth: 10, align: 'center'};
-    message.text = "Changed";
-    message.style = {fill: "black", font: "16px PetMe64"};
+        fontFamily: "Futura",
+        fontSize: 64,
+        fill: "white"
+      });
+    message = new Text("The End!", style);
+    message.x = 120;
+    message.y = app.stage.height / 2 - 32;
+    gameOverScene.addChild(message);
 }
 
 function play(delta) {
@@ -238,7 +174,9 @@ function hitTestRectangle(r1, r2) {
 function makeBlobs(textures) {
     let numberOfBlobs = 6,
         spacing = 48,
-        xOffset = 150;
+        xOffset = 150,
+        speed = 2,
+        direction = 1;
 
     for (let i = 0; i < numberOfBlobs; i++) {
         const blob = new Sprite(textures["blob.png"]);
@@ -249,8 +187,34 @@ function makeBlobs(textures) {
         blob.x = x;
         blob.y = y;
 
-        stage.addChild(blob);
+        blob.vy = speed * direction;
+
+        direction *= -1;
+
+        blobs.push(blob);
+
+        gameScene.addChild(blob);
     }
+}
+
+function makeHealthBar() {
+    healthBar = new Container();
+    healthBar.position.set(stage.width - 170, 4);
+    gameScene.addChild(healthBar);
+
+    let innerBar = new Graphics();
+    innerBar.beginFill(0x000000);
+    innerBar.drawRect(0, 0, 128, 8);
+    innerBar.endFill();
+    healthBar.addChild(innerBar);
+
+    let outerBar = new Graphics();
+    outerBar.beginFill(0xFF3300);
+    outerBar.drawRect(0, 0, 128, 8);
+    outerBar.endFill();
+    healthBar.addChild(outerBar);
+
+    healthBar.outer = outerBar;  
 }
 
 function randomInt(min, max) {
