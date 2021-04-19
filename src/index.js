@@ -36,7 +36,7 @@ document.body.appendChild(app.view);
 
 const stage = app.stage;
 
-let dungeon, explorer, treasure, door, state, healthBar;
+let dungeon, explorer, treasure, door, state, healthBar, explorerHit;
 let blobs = [];
 let items = new PIXI.Container();
 let superFastSprites = new PIXI.ParticleContainer();
@@ -95,6 +95,22 @@ function gameLoop(delta) {
     state();
 }
 
+function moveBlobs() {
+    blobs.forEach((blob) => {
+        blob.y += blob.vy;
+
+        let blobHitsWall = contain(blob, {x: 28, y: 10, width: 488, height: 480});
+    
+        if (blobHitsWall === "top" || blobHitsWall === "bottom") {
+            blob.vy *= -1;
+        }
+    
+        if(hitTestRectangle(explorer, blob)) {
+            explorerHit = true;
+        }
+    });
+}
+
 function drawText() {
     let style = new TextStyle({
         fontFamily: "Futura",
@@ -119,6 +135,7 @@ function play(delta) {
         rectangle.tint = 0xccff99;
     }
     contain(explorer, {x: 28, y: 10, width: 488, height: 480});
+    moveBlobs();
 }
 
 function hitTestRectangle(r1, r2) {
