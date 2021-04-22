@@ -147,6 +147,14 @@ function play(delta) {
     contain(explorer, {x: 28, y: 10, width: 488, height: 480});
     moveBlobs();
     checkHit();
+    checkTreasureCollision();
+}
+
+function checkTreasureCollision() {
+  if (hitTestRectangle(explorer, treasure)) {
+    treasure.x = explorer.x + 8;
+    treasure.y = explorer.y + 8;
+  }
 }
 
 function hitTestRectangle(r1, r2) {
