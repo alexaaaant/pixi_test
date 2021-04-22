@@ -28,7 +28,7 @@ const app = new Application({
     resolution: 1
 });
 
-const message = new Text("Hello world!");
+let message = new Text("Hello world!");
 
 //Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
@@ -82,6 +82,7 @@ function setup(textures) {
     gameOverScene = new Container();
     stage.addChild(gameOverScene)
     gameOverScene.visible = false;
+    drawText();
 
     state = play;
 
@@ -148,6 +149,7 @@ function play(delta) {
     moveBlobs();
     checkHit();
     checkTreasureCollision();
+    checkState();
 }
 
 function checkTreasureCollision() {
@@ -155,6 +157,21 @@ function checkTreasureCollision() {
     treasure.x = explorer.x + 8;
     treasure.y = explorer.y + 8;
   }
+}
+
+function checkState() {
+  if (hitTestRectangle(treasure, door)) {
+    state = end;
+    message.text = 'You won!';
+  } else if (healthBar.outer.width < 0) {
+    state = end;
+    message.text = 'You lost!';
+  }
+}
+
+function end() {
+  gameScene.visible = false;
+  gameOverScene.visible = true;
 }
 
 function hitTestRectangle(r1, r2) {
